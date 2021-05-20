@@ -5,6 +5,51 @@ from pandas import DataFrame
 from plotly.graph_objs import Bar, Box, Figure
 import plotly.offline as off
 
+def graph_pandas(title, column_names, summary):
+    """
+    Compute plotly graph with mean and median stats
+
+    Parameters
+    ----------
+    title : string
+        Title of the graph.
+    column_names : array of strings
+        Name of the columns in the summary DataFrame.
+    summary : DataFrame
+        DataFrame containing the mean and median stats.
+
+    Returns
+    -------
+    div : html div (string)
+        Graph as a HTML div.
+    """
+    np.random.seed(1)
+    image = np.concatenate(summary.index)
+
+    divs = []
+    for metric in column_names:
+        curr_data = np.array(summary[metric])
+        data = Box(name=metric,
+                        y=curr_data,
+                        boxpoints='all',
+                        jitter=0.3,
+                        text=image,
+                        pointpos=-1.8,
+                        hoverinfo="y+text")
+
+        fig = Figure(data=data)
+        max_value = np.max(curr_data)
+        min_value = np.min(curr_data)
+        range_yaxis = [min_value - 0.5 * np.abs(min_value), max_value + 0.5 * np.abs(max_value)]
+
+        fig['layout']['yaxis'].update(range=range_yaxis)
+        fig['layout'].update(title=title)
+        fig['layout'].update(width=500, height=500)
+        div = off.plot(fig, show_link=False, output_type='div')
+        div = div.replace("<div>", "<div style=\"display:inline-block\">")
+        divs.append(div)
+
+    return divs
 
 def graph_mean_median(title, column_names, summary):
     """

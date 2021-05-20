@@ -6,7 +6,9 @@
         <video width="1700" height="720" loop="true" autoplay="true" muted="true">
             <source src="{{ subject_values.screenshot }}" type="video/webm">
         </video>
-    {% else %}
+    {% elif subject_values.screenshot.endswith('svg') %}
+        <object class="small" data="{{subject_values.screenshot}}" width="1700" height="720" type="image/svg+xml"></object>
+    {% else  %}
         <img class="small" data-src="{{subject_values.screenshot}}" style='max-height: 720px; max-width: 1700px'>
     {% endif %}
     <div class="large" style="background: url('{{subject_values.screenshot}}') no-repeat;"></div>
