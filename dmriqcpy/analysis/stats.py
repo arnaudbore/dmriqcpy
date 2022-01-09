@@ -162,11 +162,15 @@ def stats_tractogram(column_names, tractograms):
         DataFrame containing mean, std, min and max of mean across subjects.
     """
     values = []
-    for tractogram_file in tractograms:
+    idx_wo_streamlines = []
+    for idx, tractogram_file in enumerate(tractograms):
         tractogram = nib.streamlines.load(tractogram_file, lazy_load=True)
 
         values.append(
             [tractogram.header['nb_streamlines']])
+
+        if tractogram.header['nb_streamlines'] == 0:
+            idx_wo_streamlines.append(idx)
 
     stats_per_subjects = pd.DataFrame(values, index=[tractograms],
                                       columns=column_names)
@@ -178,7 +182,7 @@ def stats_tractogram(column_names, tractograms):
                                          index=['mean', 'std', 'min', 'max'],
                                          columns=column_names)
 
-    return stats_per_subjects, stats_across_subjects
+    return stats_per_subjects, stats_across_subjects, idx_wo_streamlines
 
 
 def stats_mask_volume(column_names, images):

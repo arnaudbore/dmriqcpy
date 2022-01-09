@@ -412,7 +412,7 @@ def screenshot_fa_peaks(fa, peaks, directory='.'):
     return name
 
 
-def screenshot_tracking(tracking, t1, directory="."):
+def screenshot_tracking(tracking, t1, bundle, directory="."):
     """
     Compute 3 view screenshot with streamlines on T1.
 
@@ -422,6 +422,8 @@ def screenshot_tracking(tracking, t1, directory="."):
         tractogram filename.
     t1 : string
         t1 filename.
+    bundle: bool
+        If set, it will print all streamlines
     directory : string
         Directory to save the mosaic.
 
@@ -436,9 +438,11 @@ def screenshot_tracking(tracking, t1, directory="."):
     t1_data = t1.get_data()
 
     slice_name = ['sagittal', 'coronal', 'axial']
+
     img_center = [(int(t1_data.shape[0] / 2) + 5, None, None),
                   (None, int(t1_data.shape[1] / 2), None),
                   (None, None, int(t1_data.shape[2] / 2))]
+
     center = [(img_center[0][0] - 350 - (1 - t1.header.get_zooms()[0]) * 350, img_center[1][1], img_center[2][2]),
               (img_center[0][0], img_center[1][1] + 350 + (1 - t1.header.get_zooms()[1]) * 350, img_center[2][2]),
               (img_center[0][0], img_center[1][1], img_center[2][2] + 350 + (1 - t1.header.get_zooms()[2]) * 350)]
@@ -465,6 +469,10 @@ def screenshot_tracking(tracking, t1, directory="."):
                 if upper > len(streamline) - 1:
                     upper = len(streamline) - 1
                 streamlines.append(streamline[lower:upper])
+            elif bundle:
+                it += 1
+                streamlines.append(streamline)
+
 
         ren = window.Scene()
 
